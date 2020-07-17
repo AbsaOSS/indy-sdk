@@ -1,0 +1,48 @@
+name: Build node-vcx-wrapper
+
+on: push
+
+jobs:
+  build-wrapper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 8
+      - run: |
+          cd vcx/wrappers/node 
+          npm install
+          # npm test
+
+  publish:
+    needs: build-wrapper
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 8
+          registry-url: https://npm.pkg.github.com/
+      - run: |
+          cd vcx/wrappers/node
+          npm version prerelease --preid $(git rev-parse --abbrev-ref HEAD)
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  publish-master:
+    needs: build-wrapper
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - run: cd vcx/wrappers/node
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          registry: "https://npm.pkg.github.com/"
+      - if: steps.publish.type != 'none'
+        run: |
+          echo "Version changed: ${{ steps.publish.outputs.old-version }} => ${{ steps.publish.outputs.version }}"
+
