@@ -21,8 +21,11 @@
             "mocha"
         ]
     },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/"
+    },
     "repository": {
-        "url": "git+https://github.com/evernym/vcx.git",
+        "url": "git://github.com/AbsaOSS/indy-sdk.git",
         "type": "git"
     },
     "version": "0.8.0",
@@ -82,5 +85,5 @@
     },
     "main": "dist/src/index.js",
     "homepage": "https://github.com/evernym/vcx#readme",
-    "name": "node-vcx-wrapper"
+    "name": "@AbsaOSS/node-vcx-wrapper"
 }
